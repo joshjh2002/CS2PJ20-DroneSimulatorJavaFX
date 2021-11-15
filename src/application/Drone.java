@@ -14,41 +14,13 @@ import javafx.scene.paint.Color;
  */
 public class Drone implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 9159655539969594695L;
 	static int lastID = 0;
+	private static final long serialVersionUID = 9159655539969594695L;
 	private int x, y, id, xDir = 0, yDir = 0;
 
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	/**
-	 * @param x   coordinate at which you wish to place a drone
-	 * @param y   coordinate at which you wish to place a drone
-	 * @param dir in which you wish to make the drone move
+	 * @param x coordinate at which you wish to place a drone
+	 * @param y coordinate at which you wish to place a drone
 	 */
 	public Drone(int x, int y) {
 		this.x = x;
@@ -80,6 +52,55 @@ public class Drone implements Serializable {
 	}
 
 	/**
+	 * The event that will happen when 2 drones collide
+	 * 
+	 * @param other - the drone object it has collided with
+	 */
+	public void doCollision(Drone other) {
+		int tmp = xDir;
+		setxDir(other.xDir);
+		other.xDir = tmp;
+		tmp = yDir;
+		yDir = other.yDir;
+		other.yDir = tmp;
+	}
+
+	/**
+	 * @return id - drone id as int
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @return x - drone x-coordinate as int
+	 */
+	public int getX() {
+		return x;
+	}
+
+	/**
+	 * @return xDir - drone movement along the x-axis as int
+	 */
+	public int getxDir() {
+		return xDir;
+	}
+
+	/**
+	 * @return y - drone y-coordinate as int
+	 */
+	public int getY() {
+		return y;
+	}
+
+	/**
+	 * @return yDir - drone movement along the y-axis as int
+	 */
+	public int getyDir() {
+		return yDir;
+	}
+
+	/**
 	 * Will return true if the coordinates passed in are the same as the ones stored
 	 * in the class
 	 * 
@@ -96,27 +117,55 @@ public class Drone implements Serializable {
 	}
 
 	/**
+	 * Will move the drone by the distance directions set by xDir and yDir
+	 */
+	public void Move() {
+		x += xDir;
+		y += yDir;
+	}
+
+	/**
+	 * Force the x-coordinate to a point
+	 * 
+	 * @param x coordinate you wish to move the drone to
+	 */
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	/**
+	 * Force the direction the drone will move on the x-axis
+	 * 
+	 * @param x
+	 */
+	public void setxDir(int xDir) {
+		this.xDir = xDir;
+	}
+
+	/**
+	 * Force the y-coordinate to a point
+	 * 
+	 * @param y coordinate you wish to move the drone to
+	 */
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	/**
+	 * Force the direction the drone will move on the y-axis
+	 * 
+	 * @param y
+	 */
+	public void setyDir(int yDir) {
+		this.yDir = yDir;
+	}
+
+	/**
 	 * Gets a string representation of the drone
 	 */
 	@Override
 	public String toString() {
 		String ret = "Drone " + id + " is at position (" + x + ", " + y + ")";
 		return ret;
-	}
-
-	public int getxDir() {
-		return xDir;
-	}
-
-	public void setxDir(int xDir) {
-		this.xDir = xDir;
-	}
-
-	public int getyDir() {
-		return yDir;
-	}
-
-	public void setyDir(int yDir) {
-		this.yDir = yDir;
 	}
 }

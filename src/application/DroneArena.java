@@ -15,13 +15,10 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public class DroneArena implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7162694793744161960L;
-	int xSize, ySize;
 	List<Drone> drones;
 	private Random randomGenerator = new Random();
+	int xSize, ySize;
 
 	/**
 	 * Creates a new drone area of size x, y and will add a single drone to the
@@ -71,6 +68,39 @@ public class DroneArena implements Serializable {
 	}
 
 	/**
+	 * Will do the animation on a specific drone
+	 * 
+	 * @param d - Drone you wish to animate
+	 */
+	private void DoAnimation(Drone d) {
+
+		// Check if 2 drones collide
+		for (Drone d2 : drones) {
+			if (d != d2) {
+				if (d.getX() < d2.getX() + 20 && d.getX() + 20 > d2.getX() && d.getY() < d2.getY() + 20
+						&& 20 + d.getY() > d2.getY()) {
+					d.doCollision(d2);
+				}
+			}
+		}
+
+		// Out of bounds check
+		if (d.getX() > xSize - 20 || d.getX() < 0) {
+			// d.setX(xSize - 20);
+			d.setxDir(d.getxDir() * -1);
+		}
+
+		// Out of bounds check
+		if (d.getY() > ySize - 20 || d.getY() < 0) {
+			// d.setY(ySize - 20);
+			d.setyDir(d.getyDir() * -1);
+		}
+
+		// Move drone
+		d.Move();
+	}
+
+	/**
 	 * Will cycle through all drones currently in the list and return the drone that
 	 * is at that position.
 	 * 
@@ -98,40 +128,6 @@ public class DroneArena implements Serializable {
 			if (doAnim)
 				DoAnimation(d);
 		}
-	}
-
-	private void DoAnimation(Drone d) {
-
-		for (Drone d2 : drones) {
-			if (d != d2) {
-				if (d.getX() < d2.getX() + 20 && d.getX() + 20 > d2.getX() && d.getY() < d2.getY() + 20
-						&& 20 + d.getY() > d2.getY()) {
-
-					int tmp = d.getxDir();
-					d.setxDir(d2.getxDir());
-					d2.setxDir(tmp);
-					tmp = d.getyDir();
-					d.setyDir(d2.getyDir());
-					d2.setyDir(tmp);
-
-				} else {
-					// no collision
-				}
-			}
-		}
-
-		if (d.getX() > xSize - 20 || d.getX() < 0) {
-			// d.setX(xSize - 20);
-			d.setxDir(d.getxDir() * -1);
-		}
-
-		if (d.getY() > ySize - 20 || d.getY() < 0) {
-			// d.setY(ySize - 20);
-			d.setyDir(d.getyDir() * -1);
-		}
-
-		d.setX(d.getX() + d.getxDir());
-		d.setY(d.getY() + d.getyDir());
 	}
 
 	/**
