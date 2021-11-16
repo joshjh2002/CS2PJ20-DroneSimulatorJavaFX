@@ -1,10 +1,7 @@
 package application;
 
-import java.util.Timer;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,9 +9,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 public class Main extends Application {
 
@@ -22,11 +21,11 @@ public class Main extends Application {
 		launch(args);
 	}
 
+	DroneArena droneArena;
 	/**
 	 * If false, the animation will not play
 	 */
 	Boolean playAnimation = false;
-	DroneArena droneArena;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -50,6 +49,13 @@ public class Main extends Application {
 
 			gc.setFill(Color.BLACK);
 
+			// Try to get image:
+			try {
+				Drone.img = new Image("application/drone.png");
+			} catch (Exception e) {
+
+			}
+
 			// Add the first drone to the canvas
 			droneArena = new DroneArena((int) canvas.getWidth(), (int) canvas.getHeight());
 			droneArena.showDrones(gc, false);
@@ -65,6 +71,7 @@ public class Main extends Application {
 			MenuItem saveMenu = new MenuItem("Save");
 			// When the button is pressed
 			saveMenu.setOnAction(e -> {
+				playAnimation = false;
 				DroneSaveFileManager.Save(primaryStage, droneArena);
 			});
 			fileMenu.getItems().add(saveMenu);
@@ -73,6 +80,7 @@ public class Main extends Application {
 			MenuItem loadMenu = new MenuItem("Load");
 			// When button is pressed
 			loadMenu.setOnAction(e -> {
+				playAnimation = false;
 				droneArena = DroneSaveFileManager.Load(primaryStage);
 				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				droneArena.showDrones(gc, false);
@@ -117,7 +125,7 @@ public class Main extends Application {
 			buttons.getChildren().add(addDroneBtn);
 			buttons.getChildren().add(pausePlayBtn);
 
-			primaryStage.setResizable(true);
+			primaryStage.setResizable(false);
 			primaryStage.setTitle("Drone Simulator");
 			primaryStage.setScene(scene);
 			primaryStage.show();
