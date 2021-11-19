@@ -54,8 +54,8 @@ public class DroneArena implements Serializable {
 		for (int i = 0; i < drones.size(); i++) {
 			Drone d2 = drones.get(i);
 			if (newDrone.hasCollided(d2)) {
-				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW() - 2));
-				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW() - 2));
+				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW() - 5));
+				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW() - 5));
 				i = 0;
 			}
 		}
@@ -71,6 +71,8 @@ public class DroneArena implements Serializable {
 	 * @param d - Drone you wish to animate
 	 */
 	private void DoAnimation(Drone d) {
+		if (d.deadCounter > 20)
+			drones.remove(d);
 
 		// Check if 2 drones collide
 		for (Drone d2 : drones) {
@@ -100,13 +102,15 @@ public class DroneArena implements Serializable {
 	/**
 	 * Adds all drones to the canvas.
 	 *
-	 * @param c - The canvas to which you wish to print the drones.
+	 * @param gc     - The canvas to which you wish to print the drones.
+	 * @param doAnim - true if you want to drones to animate, false if you just wish
+	 *               to draw them in their current state
 	 */
 	public void showDrones(GraphicsContext gc, Boolean doAnim) {
 		for (Drone d : drones) {
-			d.DisplayDrone(gc);
 			if (doAnim)
 				DoAnimation(d);
+			d.DisplayDrone(gc);
 		}
 	}
 

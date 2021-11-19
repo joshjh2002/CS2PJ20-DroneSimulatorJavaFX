@@ -1,6 +1,5 @@
 package application;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Random;
 
@@ -16,9 +15,12 @@ import javafx.scene.image.Image;
 public class Drone implements Serializable {
 
 	public static Image img = null;
+	public static Image imgExpl = null;
 	static int lastID = 0;
 	private static final long serialVersionUID = 9159655539969594695L;
 	private int x, y, w, h, id, xDir = 0, yDir = 0;
+	public State state = State.Alive;
+	public int deadCounter = 0;
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
@@ -42,15 +44,18 @@ public class Drone implements Serializable {
 	/**
 	 * Will draw the drone to the canvas and rotate the drone clockwise
 	 *
-	 * @param gc
-	 *
-	 * @param c  - The canvas to which you wish to print the drones.
+	 * @param gc - The canvas to which you wish to print the drones.
 	 */
 	public void DisplayDrone(GraphicsContext gc) {
 		if (img == null)
 			gc.fillRect(x, y, w, h);
-		else
+
+		if (state == State.Dead) {
+			gc.drawImage(imgExpl, x, y, w, h);
+			deadCounter++;
+		} else {
 			gc.drawImage(img, x, y, w, h);
+		}
 
 		/*
 		 * gc.setFill(Color.RED); gc.fillText("(" + x + ", " + y + ")", x - 10, y - 5);
@@ -64,12 +69,18 @@ public class Drone implements Serializable {
 	 * @param other - the drone object it has collided with
 	 */
 	public void doCollision(Drone other) {
-		int tmp = xDir;
-		setxDir(other.xDir);
-		other.xDir = tmp;
-		tmp = yDir;
-		yDir = other.yDir;
-		other.yDir = tmp;
+		if (other.w > w) {
+			state = State.Dead;
+		} else if (w > other.w) {
+			other.state = State.Dead;
+		} else {
+			int tmp = xDir;
+			setxDir(other.xDir);
+			other.xDir = tmp;
+			tmp = yDir;
+			yDir = other.yDir;
+			other.yDir = tmp;
+		}
 	}
 
 	/**
@@ -143,6 +154,9 @@ public class Drone implements Serializable {
 	 * Will move the drone by the distance directions set by xDir and yDir
 	 */
 	public void Move() {
+		if (state == State.Dead)
+			return;
+
 		x += xDir;
 		y += yDir;
 	}
