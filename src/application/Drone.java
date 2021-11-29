@@ -1,6 +1,5 @@
 package application;
 
-import java.io.Serializable;
 import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -12,27 +11,20 @@ import javafx.scene.image.Image;
  * @author joshh
  *
  */
-public class Drone implements Serializable {
+public class Drone extends Object {
 
 	public static Image img = null;
 	public static Image imgExpl = null;
-	static int lastID = 0;
-	private static final long serialVersionUID = 9159655539969594695L;
-	private int x, y, w, h, id, xDir = 0, yDir = 0;
 	public State state = State.Alive;
-	public int deadCounter = 0;
+	private int xDir = 0, yDir = 0;
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
 	 * @param y coordinate at which you wish to place a drone
 	 */
 	public Drone(int x, int y, int w) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = w;
-		// lastID++;
-		id = ++lastID;
+		super(x, y, w);
+		type = "drone";
 		Random rnd = new Random();
 
 		while (xDir == 0 && yDir == 0) {
@@ -41,12 +33,20 @@ public class Drone implements Serializable {
 		}
 	}
 
+	public Drone(int x, int y, int w, int xD, int yD) {
+		super(x, y, w);
+		type = "drone";
+		xDir = xD;
+		yDir = yD;
+	}
+
 	/**
 	 * Will draw the drone to the canvas and rotate the drone clockwise
 	 *
 	 * @param gc - The canvas to which you wish to print the drones.
 	 */
-	public void DisplayDrone(GraphicsContext gc) {
+	@Override
+	public void DisplayObject(GraphicsContext gc) {
 		if (img == null)
 			gc.fillRect(x, y, w, h);
 
@@ -68,37 +68,24 @@ public class Drone implements Serializable {
 	 *
 	 * @param other - the drone object it has collided with
 	 */
-	public void doCollision(Drone other) {
-		if (other.w > w) {
-			state = State.Dead;
-		} else if (w > other.w) {
-			other.state = State.Dead;
-		} else {
-			int tmp = xDir;
-			setxDir(other.xDir);
-			other.xDir = tmp;
-			tmp = yDir;
-			yDir = other.yDir;
-			other.yDir = tmp;
+	@Override
+	public void doCollision(Object other) {
+		if (other.type == "drone") {
+			if (other.w > w && other.getClass() == this.getClass()) {
+				state = State.Dead;
+			} else if (w > other.w && other.getClass() == this.getClass()) {
+
+				((Drone) other).state = State.Dead;
+			} else {
+				int tmp = xDir;
+				setxDir(((Drone) other).xDir);
+				((Drone) other).xDir = tmp;
+				tmp = yDir;
+				yDir = ((Drone) other).yDir;
+				((Drone) other).yDir = tmp;
+			}
+
 		}
-	}
-
-	/**
-	 * @return id - drone id as int
-	 */
-	public int getId() {
-		return id;
-	}
-
-	public int getW() {
-		return w;
-	}
-
-	/**
-	 * @return x - drone x-coordinate as int
-	 */
-	public int getX() {
-		return x;
 	}
 
 	/**
@@ -109,13 +96,6 @@ public class Drone implements Serializable {
 	}
 
 	/**
-	 * @return y - drone y-coordinate as int
-	 */
-	public int getY() {
-		return y;
-	}
-
-	/**
 	 * @return yDir - drone movement along the y-axis as int
 	 */
 	public int getyDir() {
@@ -123,36 +103,9 @@ public class Drone implements Serializable {
 	}
 
 	/**
-	 * Checks if 2 drones have collided
-	 * 
-	 * @param d - other drone
-	 * @return true if they have collided
-	 */
-	public Boolean hasCollided(Drone d) {
-		if (x < d.x + d.w + 2 && x + w + 2 > d.x && y < d.y + h + 2 && h + y + 2 > d.y)
-			return true;
-		return false;
-	}
-
-	/**
-	 * Will return true if the coordinates passed in are the same as the ones stored
-	 * in the class
-	 *
-	 * @param sx - x position you wish to check for a drone.
-	 * @param sy - y position you wish to check for a drone.
-	 * @return True if this drone is at position (sx, sy). False if the drone is not
-	 *         at the position (sx, sy).
-	 */
-	public boolean isHere(int sx, int sy) {
-		if (sx == x && sy == y) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Will move the drone by the distance directions set by xDir and yDir
 	 */
+	@Override
 	public void Move() {
 		if (state == State.Dead)
 			return;
@@ -162,30 +115,12 @@ public class Drone implements Serializable {
 	}
 
 	/**
-	 * Force the x-coordinate to a point
-	 *
-	 * @param x coordinate you wish to move the drone to
-	 */
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	/**
 	 * Force the direction the drone will move on the x-axis
 	 *
 	 * @param x
 	 */
 	public void setxDir(int xDir) {
 		this.xDir = xDir;
-	}
-
-	/**
-	 * Force the y-coordinate to a point
-	 *
-	 * @param y coordinate you wish to move the drone to
-	 */
-	public void setY(int y) {
-		this.y = y;
 	}
 
 	/**
@@ -204,5 +139,11 @@ public class Drone implements Serializable {
 	public String toString() {
 		String ret = "Drone " + id + " is at position (" + x + ", " + y + ")";
 		return ret;
+	}
+
+	@Override
+	public byte[] fileOutput() {
+		String ret = "drone," + x + "," + y + "," + w + "," + xDir + "," + yDir + "\n";
+		return ret.getBytes();
 	}
 }

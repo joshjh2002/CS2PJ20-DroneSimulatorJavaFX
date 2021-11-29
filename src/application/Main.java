@@ -8,8 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -40,7 +38,7 @@ public class Main extends Application {
 
 			// HBox in which the buttons will be held
 			HBox canvasAndLabel = new HBox();
-			
+
 			HBox buttons = new HBox();
 
 			// Scene is the container in which the VBox and HBox will be held
@@ -53,8 +51,8 @@ public class Main extends Application {
 			canvas.setWidth(700);
 			canvas.setHeight(700);
 			GraphicsContext gc = canvas.getGraphicsContext2D();
-			
-			//Scrollable, read-only area to display debug information
+
+			// Scrollable, read-only area to display debug information
 			TextArea informationPanel = new TextArea();
 			informationPanel.setEditable(false);
 
@@ -75,10 +73,10 @@ public class Main extends Application {
 			}
 
 			// Add the first drone to the canvas
-			droneArena = DroneSaveFileManager.Load(primaryStage, "application/save.drn");
+			//droneArena = DroneSaveFileManager.Load(primaryStage, "application/save.drn");
 			if (droneArena == null)
 				droneArena = new DroneArena((int) canvas.getWidth(), (int) canvas.getHeight());
-			
+
 			droneArena.showDrones(gc, false);
 
 			// Create Menu Bar
@@ -127,6 +125,16 @@ public class Main extends Application {
 				droneArena.addDrone();
 				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				droneArena.showDrones(gc, false);
+				informationPanel.setText(droneArena.toString());
+			});
+
+			// Create a button to add a new drone to the screen
+			Button addObstacleBtn = new Button("Add Obstacle");
+			addObstacleBtn.setOnMouseClicked(e -> {
+				droneArena.addObstacle();
+				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				droneArena.showDrones(gc, false);
+				informationPanel.setText(droneArena.toString());
 			});
 
 			// Will either pause or play the animation depending on the current state
@@ -139,6 +147,11 @@ public class Main extends Application {
 					playAnimation = false;
 					pausePlayBtn.setText("Play");
 				}
+			});
+
+			canvas.setOnMouseClicked(e -> {
+				droneArena.addDrone((int) e.getX(), (int) e.getY());
+				droneArena.showDrones(gc, false);
 			});
 
 			new AnimationTimer() // create timer
@@ -155,14 +168,15 @@ public class Main extends Application {
 
 			vBox.getChildren().add(menuBar);
 			vBox.getChildren().add(canvasAndLabel);
-			
+
 			canvasAndLabel.getChildren().add(canvas);
 			canvasAndLabel.getChildren().add(informationPanel);
 			informationPanel.setText(droneArena.toString());
-			
+
 			vBox.getChildren().add(buttons);
 
 			buttons.getChildren().add(addDroneBtn);
+			buttons.getChildren().add(addObstacleBtn);
 			buttons.getChildren().add(pausePlayBtn);
 
 			primaryStage.setResizable(false);

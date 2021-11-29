@@ -3,8 +3,12 @@ package application;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -30,7 +34,7 @@ public abstract class DroneSaveFileManager {
 	 * @return returns a DroneArena is successful, null if failed
 	 */
 	public static DroneArena Load(Stage primaryStage) {
-		DroneArena droneArena = null;
+		DroneArena droneArena = new DroneArena(700, 700);
 		try {
 			// Initialise FileChooser
 			fileChooser = new FileChooser();
@@ -48,9 +52,34 @@ public abstract class DroneSaveFileManager {
 
 				// Read file
 				FileInputStream fis = new FileInputStream(file);
-				ObjectInputStream ois = new ObjectInputStream(fis);
-				droneArena = (DroneArena) ois.readObject();
-				ois.close();
+				String path = file.getAbsolutePath();
+				List<String> fileArray = Files.readAllLines(Paths.get(path));
+
+				for (String s : fileArray) {
+					String[] object = s.split(",");
+
+					String name = object[0];
+					System.out.print(name + "\n");
+					int x, y, w, h, xDir, yDir;
+					switch (name) {
+					case "obstacle":
+						x = Integer.parseInt(object[1]);
+						y = Integer.parseInt(object[2]);
+						w = Integer.parseInt(object[3]);
+						h = Integer.parseInt(object[4]);
+						droneArena.objects.add(new Obstacle(x, y, w, h));
+						break;
+					case "drone":
+						x = Integer.parseInt(object[1]);
+						y = Integer.parseInt(object[2]);
+						w = Integer.parseInt(object[3]);
+						xDir = Integer.parseInt(object[4]);
+						yDir = Integer.parseInt(object[5]);
+						droneArena.objects.add(new Drone(x, y, w, xDir, yDir));
+						break;
+					}
+				}
+
 				fis.close();
 			}
 
@@ -112,9 +141,9 @@ public abstract class DroneSaveFileManager {
 
 				// output DroneArena instance to file
 				FileOutputStream fos = new FileOutputStream(file);
-				ObjectOutputStream ous = new ObjectOutputStream(fos);
-				ous.writeObject(droneArena);
-				ous.close();
+				for (Object obj : droneArena.objects) {
+					fos.write(obj.fileOutput());
+				}
 				fos.close();
 			}
 
