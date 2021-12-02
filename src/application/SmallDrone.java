@@ -12,20 +12,15 @@ public class SmallDrone extends Drone {
 		type = "smalldrone";
 	}
 
-	/**
-	 * The event that will happen when 2 drones collide
-	 *
-	 * @param other - the drone object it has collided with
-	 */
 	@Override
 	public void doCollision(Object other) {
 		if (other.type == "smalldrone") {
-			int tmp = xDir;
-			setxDir(((SmallDrone) other).xDir);
-			((SmallDrone) other).xDir = tmp;
-			tmp = yDir;
-			yDir = ((SmallDrone) other).yDir;
-			((SmallDrone) other).yDir = tmp;
+			int tmp = movementVector[0];
+			setxDir(((SmallDrone) other).movementVector[0]);
+			((SmallDrone) other).movementVector[0] = tmp;
+			tmp = movementVector[1];
+			movementVector[1] = ((SmallDrone) other).movementVector[1];
+			((SmallDrone) other).movementVector[1] = tmp;
 		} else if (other.type == "largedrone") {
 			state = State.Dead;
 		}

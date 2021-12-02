@@ -40,7 +40,7 @@ public class Obstacle extends Object {
 
 	@Override
 	public void doCollision(Object other) {
-		if (other.type == "smalldrone" || other.type == "largedrone") {
+		if (other.type == "smalldrone" || other.type == "largedrone" || other.type == "attackdrone") {
 			((Drone) other).setxDir(((Drone) other).getxDir() * -1);
 			((Drone) other).setyDir(((Drone) other).getyDir() * -1);
 		}

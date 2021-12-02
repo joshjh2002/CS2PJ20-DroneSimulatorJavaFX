@@ -38,6 +38,14 @@ public class DroneArena implements Serializable {
 	}
 
 	/**
+	 * Reset the Drone Arena back to defaults in case you wish to start again.
+	 */
+	public void clear() {
+		objects.clear();
+		Object.lastID = 0;
+	}
+
+	/**
 	 * Adds a new drone to the list at a random location.
 	 */
 	public void addDrone() {
@@ -81,6 +89,53 @@ public class DroneArena implements Serializable {
 		} else if (width == 1) {
 			newDrone = new LargeDrone(x - 30 / 2, y - 30 / 2);
 		}
+
+		// makes sure that the position is not already used by a drone, if so
+		// it will continue to make generate new coordinates until it has found
+		// a space
+
+		for (int i = 0; i < objects.size(); i++) {
+			Object d2 = objects.get(i);
+			if (newDrone.hasCollided(d2)) {
+				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW()));
+				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW()));
+				i = 0;
+			}
+		}
+
+		// finally adds drone to list
+		objects.add(newDrone);
+
+	}
+
+	public void addAttackDrone() {
+		// if there are more drones than cells, then it will not add a new drone
+
+		// creates a new drone at a random position with a width and height of either 20
+		// or 30
+
+		Drone newDrone = null;
+		newDrone = new AttackDrone(randomGenerator.nextInt(xSize - 30), randomGenerator.nextInt(ySize - 30));
+		// makes sure that the position is not already used by a drone, if so
+		// it will continue to make generate new coordinates until it has found
+		// a space
+
+		for (int i = 0; i < objects.size(); i++) {
+			Object d2 = objects.get(i);
+			if (newDrone.hasCollided(d2)) {
+				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW()));
+				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW()));
+				i = 0;
+			}
+		}
+
+		// finally adds drone to list
+		objects.add(newDrone);
+	}
+
+	public void addAttackDrone(int x, int y) {
+		Drone newDrone = null;
+		newDrone = new AttackDrone(x - 30 / 2, y - 30 / 2);
 
 		// makes sure that the position is not already used by a drone, if so
 		// it will continue to make generate new coordinates until it has found
