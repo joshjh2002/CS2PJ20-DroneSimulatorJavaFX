@@ -30,6 +30,11 @@ public class DroneArena implements Serializable {
 		xSize = x;
 		ySize = y;
 		objects = new ArrayList<>();
+
+		for (int i = 0; i < 20; i++) {
+			addDrone();
+			addObstacle();
+		}
 	}
 
 	/**
@@ -40,10 +45,13 @@ public class DroneArena implements Serializable {
 
 		// creates a new drone at a random position with a width and height of either 20
 		// or 30
-		int width = 20 + randomGenerator.nextInt(2) * 10;
-		Drone newDrone = new Drone(randomGenerator.nextInt(xSize - width - 2),
-				randomGenerator.nextInt(ySize - width - 2), width);
-
+		int width = randomGenerator.nextInt(2);
+		Drone newDrone = null;
+		if (width == 0) {
+			newDrone = new SmallDrone(randomGenerator.nextInt(xSize - 20), randomGenerator.nextInt(ySize - 20));
+		} else if (width == 1) {
+			newDrone = new LargeDrone(randomGenerator.nextInt(xSize - 30), randomGenerator.nextInt(ySize - 30));
+		}
 		// makes sure that the position is not already used by a drone, if so
 		// it will continue to make generate new coordinates until it has found
 		// a space
@@ -51,15 +59,14 @@ public class DroneArena implements Serializable {
 		for (int i = 0; i < objects.size(); i++) {
 			Object d2 = objects.get(i);
 			if (newDrone.hasCollided(d2)) {
-				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW() - 5));
-				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW() - 5));
+				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW()));
+				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW()));
 				i = 0;
 			}
 		}
 
 		// finally adds drone to list
 		objects.add(newDrone);
-
 	}
 
 	public void addDrone(int x, int y) {
@@ -67,8 +74,13 @@ public class DroneArena implements Serializable {
 
 		// creates a new drone at a random position with a width and height of either 20
 		// or 30
-		int width = 20 + randomGenerator.nextInt(2) * 10;
-		Drone newDrone = new Drone(x - width / 2, y - width / 2, width);
+		int width = randomGenerator.nextInt(2);
+		Drone newDrone = null;
+		if (width == 0) {
+			newDrone = new SmallDrone(x - 20 / 2, y - 20 / 2);
+		} else if (width == 1) {
+			newDrone = new LargeDrone(x - 30 / 2, y - 30 / 2);
+		}
 
 		// makes sure that the position is not already used by a drone, if so
 		// it will continue to make generate new coordinates until it has found
@@ -77,8 +89,8 @@ public class DroneArena implements Serializable {
 		for (int i = 0; i < objects.size(); i++) {
 			Object d2 = objects.get(i);
 			if (newDrone.hasCollided(d2)) {
-				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW() - 5));
-				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW() - 5));
+				newDrone.setX(randomGenerator.nextInt(xSize - newDrone.getW()));
+				newDrone.setY(randomGenerator.nextInt(ySize - newDrone.getW()));
 				i = 0;
 			}
 		}
@@ -91,8 +103,8 @@ public class DroneArena implements Serializable {
 	public void addObstacle() {
 		// TODO Auto-generated method stub
 		int width = 20 + randomGenerator.nextInt(2) * 10;
-		Obstacle newObstacle = new Obstacle(randomGenerator.nextInt(xSize - width - 2),
-				randomGenerator.nextInt(ySize - width - 2), width);
+		Obstacle newObstacle = new Obstacle(randomGenerator.nextInt(xSize - width),
+				randomGenerator.nextInt(ySize - width), width);
 
 		// makes sure that the position is not already used by a drone, if so
 		// it will continue to make generate new coordinates until it has found
@@ -101,8 +113,8 @@ public class DroneArena implements Serializable {
 		for (int i = 0; i < objects.size(); i++) {
 			Object d2 = objects.get(i);
 			if (newObstacle.hasCollided(d2)) {
-				newObstacle.setX(randomGenerator.nextInt(xSize - newObstacle.getW() - 5));
-				newObstacle.setY(randomGenerator.nextInt(ySize - newObstacle.getW() - 5));
+				newObstacle.setX(randomGenerator.nextInt(xSize - newObstacle.getW()));
+				newObstacle.setY(randomGenerator.nextInt(ySize - newObstacle.getW()));
 				i = 0;
 			}
 		}
@@ -125,29 +137,23 @@ public class DroneArena implements Serializable {
 			}
 		}
 
-		// Out of bounds check
-		if (d.type == "drone") {
-			// Check if 2 drones collide
+		d.Move();
 
+		// Out of bounds check
+		if (d.type == "smalldrone" || d.type == "largedrone") {
+			// Check if 2 drones collide
 			if (d.deadCounter > 20) {
 				objects.remove(d);
 				return;
 			}
 			if (d.getX() > xSize - d.getW() || d.getX() < 0) {
-				// d.setX(xSize - 20);
-				if (d.type == "drone") {
-					((Drone) d).setxDir(((Drone) d).getxDir() * -1);
-				}
+				((Drone) d).setxDir(((Drone) d).getxDir() * -1);
 			}
 
 			// Out of bounds check
 			if (d.getY() > ySize - d.getW() || d.getY() < 0) {
-				// d.setY(ySize - 20);
-				if (d.type == "drone")
-					((Drone) d).setyDir(((Drone) d).getyDir() * -1);
+				((Drone) d).setyDir(((Drone) d).getyDir() * -1);
 			}
-			// Move drone
-			d.Move();
 		}
 
 	}

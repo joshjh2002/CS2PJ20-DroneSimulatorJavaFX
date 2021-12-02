@@ -1,6 +1,6 @@
 package application;
 
-import java.io.Serializable;
+import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -16,6 +16,10 @@ public abstract class Object {
 	public int deadCounter = 0;
 	public String type = "";
 	protected int x, y, w, h, id;
+
+	{
+
+	}
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
@@ -47,6 +51,8 @@ public abstract class Object {
 	public void doCollision(Object other) {
 
 	}
+
+	public abstract byte[] fileOutput();
 
 	/**
 	 * @return id - drone id as int
@@ -80,7 +86,7 @@ public abstract class Object {
 	 * @return true if they have collided
 	 */
 	public Boolean hasCollided(Object other) {
-		if (x < other.x + other.w + 2 && x + w + 2 > other.x && y < other.y + h + 2 && h + y + 2 > other.y)
+		if (x < other.x + other.w && x + w > other.x && y < other.y + h && h + y > other.y)
 			return true;
 		return false;
 	}
@@ -118,9 +124,4 @@ public abstract class Object {
 		return ret;
 	}
 
-	public abstract byte[] fileOutput();
-	{
-		
-	}
-	
 }
