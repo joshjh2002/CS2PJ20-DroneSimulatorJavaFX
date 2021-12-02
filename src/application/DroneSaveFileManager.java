@@ -33,6 +33,7 @@ public abstract class DroneSaveFileManager {
 	 */
 	public static DroneArena Load(Stage primaryStage) {
 		DroneArena droneArena = new DroneArena(700, 700);
+		droneArena.clear();
 		try {
 			// Initialise FileChooser
 			fileChooser = new FileChooser();

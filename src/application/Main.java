@@ -72,6 +72,13 @@ public class Main extends Application {
 
 			}
 
+			// Try to get attack drone image:
+			try {
+				AttackDrone.img = new Image("application/attack.png");
+			} catch (Exception e) {
+
+			}
+
 			// Add the first drone to the canvas
 			// droneArena = DroneSaveFileManager.Load(primaryStage, "application/save.drn");
 			if (droneArena == null)
@@ -128,10 +135,28 @@ public class Main extends Application {
 				informationPanel.setText(droneArena.toString());
 			});
 
-			// Create a button to add a new drone to the screen
+			// Create a button to add a new attack drone to the screen
+			Button addAttackBtn = new Button("Add Attack Drone");
+			addAttackBtn.setOnMouseClicked(e -> {
+				droneArena.addAttackDrone();
+				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				droneArena.showDrones(gc, false);
+				informationPanel.setText(droneArena.toString());
+			});
+
+			// Create a button to add a new obstacle to the screen
 			Button addObstacleBtn = new Button("Add Obstacle");
 			addObstacleBtn.setOnMouseClicked(e -> {
 				droneArena.addObstacle();
+				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				droneArena.showDrones(gc, false);
+				informationPanel.setText(droneArena.toString());
+			});
+
+			// Create a button to clear the Arena
+			Button clearBtn = new Button("Clear Arena");
+			clearBtn.setOnMouseClicked(e -> {
+				droneArena.clear();
 				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				droneArena.showDrones(gc, false);
 				informationPanel.setText(droneArena.toString());
@@ -149,9 +174,11 @@ public class Main extends Application {
 				}
 			});
 
+			// Add drone on Mouse Click
 			canvas.setOnMouseClicked(e -> {
 				droneArena.addDrone((int) e.getX(), (int) e.getY());
 				droneArena.showDrones(gc, false);
+				informationPanel.setText(droneArena.toString());
 			});
 
 			new AnimationTimer() // create timer
@@ -177,6 +204,8 @@ public class Main extends Application {
 
 			buttons.getChildren().add(addDroneBtn);
 			buttons.getChildren().add(addObstacleBtn);
+			buttons.getChildren().add(addAttackBtn);
+			buttons.getChildren().add(clearBtn);
 			buttons.getChildren().add(pausePlayBtn);
 
 			primaryStage.setResizable(false);

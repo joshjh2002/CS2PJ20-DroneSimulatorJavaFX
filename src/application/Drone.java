@@ -17,7 +17,7 @@ public abstract class Drone extends Object {
 	public static Image img = null;
 	public static Image imgExpl = null;
 	protected State state = State.Alive;
-	protected int xDir = 0, yDir = 0;
+	protected int[] movementVector;
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
@@ -27,18 +27,20 @@ public abstract class Drone extends Object {
 		super(x, y, w);
 		type = "drone";
 		Random rnd = new Random();
-
-		while (xDir == 0 && yDir == 0) {
-			xDir = rnd.nextInt(3) - 1;
-			yDir = rnd.nextInt(3) - 1;
+		movementVector = new int[2];
+		movementVector[0] = 0;
+		movementVector[1] = 0;
+		while (movementVector[0] == 0 && movementVector[1] == 0) {
+			movementVector[0] = rnd.nextInt(3) - 1;
+			movementVector[1] = rnd.nextInt(3) - 1;
 		}
 	}
 
 	public Drone(int x, int y, int w, int xD, int yD) {
 		super(x, y, w);
 		type = "drone";
-		xDir = xD;
-		yDir = yD;
+		movementVector[0] = xD;
+		movementVector[1] = yD;
 	}
 
 	/**
@@ -64,7 +66,7 @@ public abstract class Drone extends Object {
 	 */
 	@Override
 	public byte[] fileOutput() {
-		String ret = "drone," + x + "," + y + "," + w + "," + xDir + "," + yDir + "\n";
+		String ret = "drone," + x + "," + y + "," + w + "," + movementVector[0] + "," + movementVector[1] + "\n";
 		return ret.getBytes();
 	}
 
@@ -72,14 +74,14 @@ public abstract class Drone extends Object {
 	 * @return xDir - drone movement along the x-axis as int
 	 */
 	public int getxDir() {
-		return xDir;
+		return movementVector[0];
 	}
 
 	/**
 	 * @return yDir - drone movement along the y-axis as int
 	 */
 	public int getyDir() {
-		return yDir;
+		return movementVector[1];
 	}
 
 	/**
@@ -90,8 +92,8 @@ public abstract class Drone extends Object {
 		if (state == State.Dead)
 			return;
 
-		x += xDir;
-		y += yDir;
+		x += movementVector[0];
+		y += movementVector[1];
 	}
 
 	/**
@@ -100,7 +102,7 @@ public abstract class Drone extends Object {
 	 * @param x
 	 */
 	public void setxDir(int xDir) {
-		this.xDir = xDir;
+		this.movementVector[0] = xDir;
 	}
 
 	/**
@@ -109,7 +111,7 @@ public abstract class Drone extends Object {
 	 * @param y
 	 */
 	public void setyDir(int yDir) {
-		this.yDir = yDir;
+		this.movementVector[1] = yDir;
 	}
 
 	/**
