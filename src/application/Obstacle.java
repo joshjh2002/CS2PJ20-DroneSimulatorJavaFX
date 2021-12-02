@@ -24,7 +24,6 @@ public class Obstacle extends Object {
 		Random rnd = new Random();
 		w = 20 + rnd.nextInt(10) * rnd.nextInt(4);
 		h = 20 + rnd.nextInt(10) * rnd.nextInt(4);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Obstacle(int x, int y, int w, int h) {
@@ -41,22 +40,22 @@ public class Obstacle extends Object {
 
 	@Override
 	public void doCollision(Object other) {
-		if (other.type == "drone") {
+		if (other.type == "smalldrone" || other.type == "largedrone") {
 			((Drone) other).setxDir(((Drone) other).getxDir() * -1);
 			((Drone) other).setyDir(((Drone) other).getyDir() * -1);
 		}
 	}
 
 	@Override
-	public String toString() {
-		String ret = "Obstacle " + id + " is at position (" + x + ", " + y + ")";
-		return ret;
-	}
-
-	@Override
 	public byte[] fileOutput() {
 		String ret = "obstacle," + x + "," + y + "," + w + "," + h + "\n";
 		return ret.getBytes();
+	}
+
+	@Override
+	public String toString() {
+		String ret = "Obstacle " + id + " is at position (" + x + ", " + y + ")";
+		return ret;
 	}
 
 }

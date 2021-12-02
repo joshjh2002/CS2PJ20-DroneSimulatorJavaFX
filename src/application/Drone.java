@@ -1,5 +1,6 @@
 package application;
 
+import java.util.List;
 import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -11,12 +12,12 @@ import javafx.scene.image.Image;
  * @author joshh
  *
  */
-public class Drone extends Object {
+public abstract class Drone extends Object {
 
 	public static Image img = null;
 	public static Image imgExpl = null;
-	public State state = State.Alive;
-	private int xDir = 0, yDir = 0;
+	protected State state = State.Alive;
+	protected int xDir = 0, yDir = 0;
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
@@ -56,36 +57,15 @@ public class Drone extends Object {
 		} else {
 			gc.drawImage(img, x, y, w, h);
 		}
-
-		/*
-		 * gc.setFill(Color.RED); gc.fillText("(" + x + ", " + y + ")", x - 10, y - 5);
-		 * gc.setFill(Color.BLACK);
-		 */
 	}
 
 	/**
-	 * The event that will happen when 2 drones collide
-	 *
-	 * @param other - the drone object it has collided with
+	 * @return the drone object in string representation
 	 */
 	@Override
-	public void doCollision(Object other) {
-		if (other.type == "drone") {
-			if (other.w > w && other.getClass() == this.getClass()) {
-				state = State.Dead;
-			} else if (w > other.w && other.getClass() == this.getClass()) {
-
-				((Drone) other).state = State.Dead;
-			} else {
-				int tmp = xDir;
-				setxDir(((Drone) other).xDir);
-				((Drone) other).xDir = tmp;
-				tmp = yDir;
-				yDir = ((Drone) other).yDir;
-				((Drone) other).yDir = tmp;
-			}
-
-		}
+	public byte[] fileOutput() {
+		String ret = "drone," + x + "," + y + "," + w + "," + xDir + "," + yDir + "\n";
+		return ret.getBytes();
 	}
 
 	/**
@@ -141,9 +121,4 @@ public class Drone extends Object {
 		return ret;
 	}
 
-	@Override
-	public byte[] fileOutput() {
-		String ret = "drone," + x + "," + y + "," + w + "," + xDir + "," + yDir + "\n";
-		return ret.getBytes();
-	}
 }

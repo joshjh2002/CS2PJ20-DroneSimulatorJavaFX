@@ -73,7 +73,7 @@ public class Main extends Application {
 			}
 
 			// Add the first drone to the canvas
-			//droneArena = DroneSaveFileManager.Load(primaryStage, "application/save.drn");
+			// droneArena = DroneSaveFileManager.Load(primaryStage, "application/save.drn");
 			if (droneArena == null)
 				droneArena = new DroneArena((int) canvas.getWidth(), (int) canvas.getHeight());
 

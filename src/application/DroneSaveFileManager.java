@@ -3,9 +3,7 @@ package application;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -75,7 +73,10 @@ public abstract class DroneSaveFileManager {
 						w = Integer.parseInt(object[3]);
 						xDir = Integer.parseInt(object[4]);
 						yDir = Integer.parseInt(object[5]);
-						droneArena.objects.add(new Drone(x, y, w, xDir, yDir));
+						if (w == 20)
+							droneArena.objects.add(new SmallDrone(x, y, xDir, yDir));
+						else
+							droneArena.objects.add(new LargeDrone(x, y, xDir, yDir));
 						break;
 					}
 				}
