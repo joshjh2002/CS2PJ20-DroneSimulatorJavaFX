@@ -92,32 +92,6 @@ public abstract class DroneSaveFileManager {
 		return droneArena;
 	}
 
-	public static DroneArena Load(Stage primaryStage, String path) {
-		DroneArena droneArena = null;
-		try {
-			File file = new File(path);
-			// If they have chosen a file
-			if (file != null) {
-				// if file does not exist then return null as you can't load from a file that
-				// doesn't exist
-				if (!file.exists())
-					return null;
-
-				// Read file
-				FileInputStream fis = new FileInputStream(file);
-				ObjectInputStream ois = new ObjectInputStream(fis);
-				droneArena = (DroneArena) ois.readObject();
-				ois.close();
-				fis.close();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return droneArena;
-	}
-
 	/**
 	 * Will save a DroneArena instance to a file using serialization
 	 *

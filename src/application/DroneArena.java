@@ -178,6 +178,29 @@ public class DroneArena implements Serializable {
 		objects.add(newObstacle);
 	}
 
+	public void addObstacle(int x, int y) {
+		// TODO Auto-generated method stub
+		int width = 20 + randomGenerator.nextInt(2) * 10;
+		Obstacle newObstacle = new Obstacle(x - width / 2, y - width / 2, width);
+
+		// makes sure that the position is not already used by a drone, if so
+		// it will continue to make generate new coordinates until it has found
+		// a space
+
+		for (int i = 0; i < objects.size(); i++) {
+			Object d2 = objects.get(i);
+			if (newObstacle.hasCollided(d2)) {
+				newObstacle.setX(randomGenerator.nextInt(xSize - newObstacle.getW()));
+				newObstacle.setY(randomGenerator.nextInt(ySize - newObstacle.getW()));
+				i = 0;
+			}
+		}
+
+		// finally adds drone to list
+		objects.add(newObstacle);
+
+	}
+
 	/**
 	 * Will do the animation on a specific drone
 	 *
@@ -195,7 +218,7 @@ public class DroneArena implements Serializable {
 		d.Move();
 
 		// Out of bounds check
-		if (d.type == "smalldrone" || d.type == "largedrone") {
+		if (d.type == "smalldrone" || d.type == "largedrone" || d.type == "attackdrone") {
 			// Check if 2 drones collide
 			if (d.deadCounter > 20) {
 				objects.remove(d);
