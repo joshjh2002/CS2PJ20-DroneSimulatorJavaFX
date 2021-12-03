@@ -11,9 +11,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -29,6 +32,7 @@ public class Main extends Application {
 	 * If false, the animation will not play
 	 */
 	Boolean playAnimation = false;
+	ToggleGroup radioBtnGroup = null;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -40,12 +44,13 @@ public class Main extends Application {
 			HBox canvasAndLabel = new HBox();
 
 			HBox buttons = new HBox();
+			buttons.setSpacing(5);
 
 			// Scene is the container in which the VBox and HBox will be held
-			Scene scene = new Scene(vBox, 950, 750);
+			Scene scene = new Scene(vBox, 950, 760);
 
 			// Adds reference to a style sheet that can be used in the future
-			scene.getStylesheets().add("application/application.css");
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
 			Canvas canvas = new Canvas();
 			canvas.setWidth(700);
@@ -122,7 +127,10 @@ public class Main extends Application {
 				alert.setTitle("Help");
 				alert.setHeaderText("How use the Drone Simulator");
 				alert.setContentText(
-						"Press 'Add Drone' to add a new drone to the screen. This will choose a drone of 20x20, or 30x30, size and add it to the screen at a random position\n\nPress the Play/Pause button to start or stor the simulation.");
+						"Press 'Add Drone' to add a new drone to the screen. This will choose a drone of 20x20, or 30x30, size and add it to the screen at a random position\n\n"
+						+ "Press the Play/Pause button to start or stor the simulation.\n\n"
+						+ "You can click on the canvas with your mouse to add the object of your choice, determined by the Radio Buttons at the bottom of the screen.");
+				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 				alert.show();
 			});
 
@@ -176,9 +184,17 @@ public class Main extends Application {
 
 			// Add drone on Mouse Click
 			canvas.setOnMouseClicked(e -> {
-				droneArena.addDrone((int) e.getX(), (int) e.getY());
-				droneArena.showDrones(gc, false);
-				informationPanel.setText(droneArena.toString());
+				RadioButton selected = (RadioButton) radioBtnGroup.getSelectedToggle();
+				if (selected != null) {
+					if (selected.getText() == "Drone")
+						droneArena.addDrone((int) e.getX(), (int) e.getY());
+					else if (selected.getText() == "Attack Drone")
+						droneArena.addAttackDrone((int) e.getX(), (int) e.getY());
+					else if (selected.getText() == "Obstacle")
+						droneArena.addObstacle((int) e.getX(), (int) e.getY());
+					droneArena.showDrones(gc, false);
+					informationPanel.setText(droneArena.toString());
+				}
 			});
 
 			new AnimationTimer() // create timer
@@ -192,6 +208,22 @@ public class Main extends Application {
 					}
 				}
 			}.start(); // start the timer
+
+			radioBtnGroup = new ToggleGroup();
+
+			RadioButton droneRadioBtn = new RadioButton();
+			droneRadioBtn.setText("Drone");
+			droneRadioBtn.setToggleGroup(radioBtnGroup);
+
+			RadioButton attackDroneRadioBtn = new RadioButton();
+			attackDroneRadioBtn.setText("Attack Drone");
+			attackDroneRadioBtn.setToggleGroup(radioBtnGroup);
+
+			RadioButton obstacleRadioBtn = new RadioButton();
+			obstacleRadioBtn.setText("Obstacle");
+			obstacleRadioBtn.setToggleGroup(radioBtnGroup);
+
+			radioBtnGroup.selectToggle(droneRadioBtn);
 
 			vBox.getChildren().add(menuBar);
 			vBox.getChildren().add(canvasAndLabel);
@@ -207,6 +239,9 @@ public class Main extends Application {
 			buttons.getChildren().add(addAttackBtn);
 			buttons.getChildren().add(clearBtn);
 			buttons.getChildren().add(pausePlayBtn);
+			buttons.getChildren().add(droneRadioBtn);
+			buttons.getChildren().add(attackDroneRadioBtn);
+			buttons.getChildren().add(obstacleRadioBtn);
 
 			primaryStage.setResizable(false);
 			primaryStage.setTitle("Drone Simulator");

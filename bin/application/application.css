@@ -1,7 +1,26 @@
 .background {
-    -fx-background-color: black;
+	-fx-background-color: black;
 }
 
 .button {
-    
+    -fx-pref-width: 125px;
+    -fx-pref-height: 20px;
+    -fx-text-fill: black;
+    -fx-background-color: lightgrey;
+    -fx-border-radius: 25;
+    -fx-background-radius: 25;
+}
+
+.button:hover {
+    -fx-background-color: darkgrey;
+    -fx-scale-x: 1.05;
+    -fx-scale-y:1.05;
+}
+
+.text-area{
+	-fx-background-color: black;
+}
+
+.radio-button{
+	-fx-translate-y: 5px;
 }

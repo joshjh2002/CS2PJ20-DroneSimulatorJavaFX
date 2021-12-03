@@ -86,7 +86,8 @@ public abstract class Object {
 	 * @return true if they have collided
 	 */
 	public Boolean hasCollided(Object other) {
-		if (x < other.x + other.w && x + w > other.x && y < other.y + h && h + y > other.y)
+		if (this.x < other.x + other.w && this.x + this.w > other.x && this.y < other.y + other.h
+				&& this.h + this.y > other.y)
 			return true;
 		return false;
 	}
