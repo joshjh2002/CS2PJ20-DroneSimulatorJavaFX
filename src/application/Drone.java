@@ -1,6 +1,5 @@
 package application;
 
-import java.util.List;
 import java.util.Random;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -16,8 +15,8 @@ public abstract class Drone extends Object {
 
 	public static Image img = null;
 	public static Image imgExpl = null;
-	protected State state = State.Alive;
 	protected int[] movementVector;
+	protected State state = State.Alive;
 
 	/**
 	 * @param x coordinate at which you wish to place a drone
@@ -39,6 +38,7 @@ public abstract class Drone extends Object {
 	public Drone(int x, int y, int w, int xD, int yD) {
 		super(x, y, w);
 		type = "drone";
+		movementVector = new int[2];
 		movementVector[0] = xD;
 		movementVector[1] = yD;
 	}
@@ -51,13 +51,13 @@ public abstract class Drone extends Object {
 	@Override
 	public void DisplayObject(GraphicsContext gc) {
 		if (img == null)
-			gc.fillRect(x, y, w, h);
+			gc.fillRect(getX(), getY(), w, h);
 
 		if (state == State.Dead) {
-			gc.drawImage(imgExpl, x, y, w, h);
+			gc.drawImage(imgExpl, getX(), getY(), w, h);
 			deadCounter++;
 		} else {
-			gc.drawImage(img, x, y, w, h);
+			gc.drawImage(img, getX(), getY(), w, h);
 		}
 	}
 
@@ -66,7 +66,7 @@ public abstract class Drone extends Object {
 	 */
 	@Override
 	public byte[] fileOutput() {
-		String ret = "drone," + x + "," + y + "," + w + "," + movementVector[0] + "," + movementVector[1] + "\n";
+		String ret = "drone," + getX() + "," + getY() + "," + w + "," + getxDir() + "," + getyDir() + "\n";
 		return ret.getBytes();
 	}
 
@@ -92,8 +92,8 @@ public abstract class Drone extends Object {
 		if (state == State.Dead)
 			return;
 
-		x += movementVector[0];
-		y += movementVector[1];
+		position[0] += movementVector[0];
+		position[1] += movementVector[1];
 	}
 
 	/**
@@ -119,7 +119,7 @@ public abstract class Drone extends Object {
 	 */
 	@Override
 	public String toString() {
-		String ret = "Drone " + id + " is at position (" + x + ", " + y + ")";
+		String ret = "Drone " + id + " is at position (" + getX() + ", " + getY() + ")";
 		return ret;
 	}
 

@@ -2,16 +2,33 @@ package application;
 
 public class SmallDrone extends Drone {
 
+	/**
+	 * Creates new drone at specific coordinates
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public SmallDrone(int x, int y) {
 		super(x, y, 20);
 		type = "smalldrone";
 	}
 
+	/**
+	 * Creates new drone at specific coordinates with specific movement vectors
+	 * 
+	 * @param x
+	 * @param y
+	 * @param xD
+	 * @param yD
+	 */
 	public SmallDrone(int x, int y, int xD, int yD) {
 		super(x, y, 20, xD, yD);
 		type = "smalldrone";
 	}
 
+	/**
+	 * Handles collision for small drones
+	 */
 	@Override
 	public void doCollision(Object other) {
 		if (other.type == "smalldrone") {
