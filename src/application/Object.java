@@ -1,7 +1,5 @@
 package application;
 
-import java.util.List;
-
 import javafx.scene.canvas.GraphicsContext;
 
 /**
@@ -13,21 +11,18 @@ import javafx.scene.canvas.GraphicsContext;
 public abstract class Object {
 
 	static int lastID = 0;
-	public int deadCounter = 0;
-	public String type = "";
-	protected int x, y, w, h, id;
-
-	{
-
-	}
-
+	protected int deadCounter = 0;
+	protected int position[];
+	protected String type = "";
+	protected int w, h, id;
 	/**
 	 * @param x coordinate at which you wish to place a drone
 	 * @param y coordinate at which you wish to place a drone
 	 */
 	public Object(int x, int y, int w) {
-		this.x = x;
-		this.y = y;
+		position = new int[2];
+		position[0] = x;
+		position[1] = y;
 		this.w = w;
 		this.h = w;
 		// lastID++;
@@ -40,7 +35,7 @@ public abstract class Object {
 	 * @param gc - The canvas to which you wish to print the drones.
 	 */
 	public void DisplayObject(GraphicsContext gc) {
-		gc.fillRect(x, y, w, h);
+		gc.fillRect(getX(), getY(), w, h);
 	}
 
 	/**
@@ -49,7 +44,7 @@ public abstract class Object {
 	 * @param other - the drone object it has collided with
 	 */
 	public void doCollision(Object other) {
-
+		return;
 	}
 
 	public abstract byte[] fileOutput();
@@ -69,14 +64,14 @@ public abstract class Object {
 	 * @return x - drone x-coordinate as int
 	 */
 	public int getX() {
-		return x;
+		return position[0];
 	}
 
 	/**
 	 * @return x - drone y-coordinate as int
 	 */
 	public int getY() {
-		return y;
+		return position[1];
 	}
 
 	/**
@@ -86,8 +81,8 @@ public abstract class Object {
 	 * @return true if they have collided
 	 */
 	public Boolean hasCollided(Object other) {
-		if (this.x < other.x + other.w && this.x + this.w > other.x && this.y < other.y + other.h
-				&& this.h + this.y > other.y)
+		if (this.getX() < other.getX() + other.w && this.getX() + this.w > other.getX()
+				&& this.getY() < other.getY() + other.h && this.h + this.getY() > other.getY())
 			return true;
 		return false;
 	}
@@ -104,16 +99,16 @@ public abstract class Object {
 	 * @param x coordinate you wish to move the drone to
 	 */
 	public void setX(int x) {
-		this.x = x;
+		this.position[0] = x;
 	}
 
 	/**
-	 * Force the y-coordinate to a point
+	 * Fo.position[0]e the y-coordinate to a point
 	 *
 	 * @param y coordinate you wish to move the drone to
 	 */
 	public void setY(int y) {
-		this.y = y;
+		this.position[1] = y;
 	}
 
 	/**
@@ -121,7 +116,7 @@ public abstract class Object {
 	 */
 	@Override
 	public String toString() {
-		String ret = "Drone " + id + " is at position (" + x + ", " + y + ")";
+		String ret = "Drone " + id + " is at position (" + getX() + ", " + getY() + ")";
 		return ret;
 	}
 

@@ -23,20 +23,24 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	static Image backgroundImg = null;
+
 	public static void main(String[] args) {
 		launch(args);
 	}
 
-	DroneArena droneArena;
+	private DroneArena droneArena;
 	/**
 	 * If false, the animation will not play
 	 */
-	Boolean playAnimation = false;
-	ToggleGroup radioBtnGroup = null;
+	private Boolean playAnimation = false, useBackground = false;
+
+	private ToggleGroup radioBtnGroup = null;
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+
 			// VBox is the container in which the canvas will be held
 			VBox vBox = new VBox();
 
@@ -52,6 +56,7 @@ public class Main extends Application {
 			// Adds reference to a style sheet that can be used in the future
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
+			// CREATE FIXED CANVAS SIZE
 			Canvas canvas = new Canvas();
 			canvas.setWidth(700);
 			canvas.setHeight(700);
@@ -80,6 +85,15 @@ public class Main extends Application {
 			// Try to get attack drone image:
 			try {
 				AttackDrone.img = new Image("application/attack.png");
+			} catch (Exception e) {
+
+			}
+
+			// Try to get background image
+			try {
+				backgroundImg = new Image("application/background.jpg");
+				useBackground = true;
+				gc.drawImage(backgroundImg, 0, 0, 700, 700);
 			} catch (Exception e) {
 
 			}
@@ -114,9 +128,26 @@ public class Main extends Application {
 				playAnimation = false;
 				droneArena = DroneSaveFileManager.Load(primaryStage);
 				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				if (useBackground && backgroundImg != null) {
+					gc.drawImage(backgroundImg, 0, 0, 700, 700);
+				}
 				droneArena.showDrones(gc, false);
 			});
 			fileMenu.getItems().add(loadMenu);
+
+			// Add 'Load' button to 'File' Tab
+			MenuItem toggleBackground = new MenuItem("Toggle Background");
+			// When button is pressed
+			toggleBackground.setOnAction(e -> {
+				useBackground = !useBackground;
+				gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				if (useBackground && backgroundImg != null) {
+					gc.drawImage(backgroundImg, 0, 0, 700, 700);
+				}
+
+				droneArena.showDrones(gc, false);
+			});
+			fileMenu.getItems().add(toggleBackground);
 
 			// Add 'Help' Tab to menu bar
 			MenuItem helpMenu = new MenuItem("Help");
@@ -128,8 +159,8 @@ public class Main extends Application {
 				alert.setHeaderText("How use the Drone Simulator");
 				alert.setContentText(
 						"Press 'Add Drone' to add a new drone to the screen. This will choose a drone of 20x20, or 30x30, size and add it to the screen at a random position\n\n"
-						+ "Press the Play/Pause button to start or stor the simulation.\n\n"
-						+ "You can click on the canvas with your mouse to add the object of your choice, determined by the Radio Buttons at the bottom of the screen.");
+								+ "Press the Play/Pause button to start or stor the simulation.\n\n"
+								+ "You can click on the canvas with your mouse to add the object of your choice, determined by the Radio Buttons at the bottom of the screen.");
 				alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 				alert.show();
 			});
@@ -203,6 +234,9 @@ public class Main extends Application {
 				public void handle(long currentNanoTime) {
 					if (playAnimation) {
 						gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						if (useBackground && backgroundImg != null) {
+							gc.drawImage(backgroundImg, 0, 0, 700, 700);
+						}
 						droneArena.showDrones(gc, true);
 						informationPanel.setText(droneArena.toString());
 					}
@@ -225,6 +259,7 @@ public class Main extends Application {
 
 			radioBtnGroup.selectToggle(droneRadioBtn);
 
+			// ADD ALL OBJECTS TO THE SCENE
 			vBox.getChildren().add(menuBar);
 			vBox.getChildren().add(canvasAndLabel);
 
@@ -243,6 +278,7 @@ public class Main extends Application {
 			buttons.getChildren().add(attackDroneRadioBtn);
 			buttons.getChildren().add(obstacleRadioBtn);
 
+			// SET STAGE SETTINGS
 			primaryStage.setResizable(false);
 			primaryStage.setTitle("Drone Simulator");
 			primaryStage.setScene(scene);

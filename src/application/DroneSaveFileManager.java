@@ -3,7 +3,6 @@ package application;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -20,10 +19,10 @@ import javafx.stage.Stage;
  */
 public abstract class DroneSaveFileManager {
 	// Filter for only .drn files
-	static ExtensionFilter extFilter = new ExtensionFilter("Drone File (*.drn)", "*.drn");
+	static private ExtensionFilter extFilter = new ExtensionFilter("Drone File (*.drn)", "*.drn");
 
 	// Actual file chooser object
-	static FileChooser fileChooser;
+	static private FileChooser fileChooser;
 
 	/**
 	 * Will load a DroneArena instance from a file
@@ -78,6 +77,13 @@ public abstract class DroneSaveFileManager {
 							droneArena.objects.add(new SmallDrone(x, y, xDir, yDir));
 						else
 							droneArena.objects.add(new LargeDrone(x, y, xDir, yDir));
+						break;
+					case "attackdrone":
+						x = Integer.parseInt(object[1]);
+						y = Integer.parseInt(object[2]);
+						xDir = Integer.parseInt(object[3]);
+						yDir = Integer.parseInt(object[4]);
+						droneArena.objects.add(new AttackDrone(x, y, xDir, yDir));
 						break;
 					}
 				}
